@@ -19,10 +19,29 @@ namespace adore
 namespace math
 {
 
-double to_degrees( double radians );
-double to_radians( double degrees );
-// Normalize heading error to the range [-pi, pi]
-double normalize_angle( double angle );
+double constexpr normalize_angle( double angle )
+{
+  angle = fmod( angle + M_PI, 2.0 * M_PI );
+  if( angle < 0 )
+    angle += 2.0 * M_PI;
+  return angle - M_PI;
+}
+
+constexpr double
+to_degrees( double radians )
+{
+  double degrees = radians * ( 180.0 / M_PI );
+  degrees        = fmod( degrees, 360.0 );
+  if( degrees < 0 )
+    degrees += 360.0; // Ensure it's within [0, 360)
+  return degrees;
+}
+
+constexpr double
+to_radians( double degrees )
+{
+  return normalize_angle( degrees * ( M_PI / 180.0 ) );
+}
 
 double latlon_deg_to_utm_rad( double latlon_degrees );
 double utm_rad_to_latlon_deg( double utm_radians );
