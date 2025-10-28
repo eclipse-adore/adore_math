@@ -13,6 +13,9 @@
 
 #pragma once
 #include <math.h>
+#include <cstddef>
+#include <limits>
+#include <optional>
 
 #include <adore_math/polygon.h>
 
@@ -38,5 +41,26 @@ distance_2d( const PointType& a, const OtherPointType& b )
 double polygon_distance( const Polygon2d& a, const Polygon2d& b );
 
 double distance_point_to_segment( const Point2d& point, const Point2d& seg_start, const Point2d& seg_end );
+
+template<typename PointType, typename OtherPointType>
+std::optional<OtherPointType>
+find_closest_point(const PointType& a, const std::vector<OtherPointType>& b)
+{
+  double closest_observed_distance_sqaured = std::numeric_limits<double>::max();
+  std::optional<OtherPointType> closest_point = std::nullopt;
+
+  for( const OtherPointType& p : b)
+  {
+    double squared_distance_between_points = squared_distance_2d(a, p);
+    if ( squared_distance_between_points < closest_observed_distance_sqaured )
+    {
+      closest_observed_distance_sqaured = squared_distance_between_points;
+      closest_point = p;
+    }
+  }
+
+  return closest_point;
+}
+
 } // namespace math
 } // namespace adore
