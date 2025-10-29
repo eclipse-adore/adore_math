@@ -5,14 +5,12 @@ project(adore_math VERSION 0.0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Dependencies
 find_package(ament_cmake REQUIRED)
-find_package(osqp REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(OsqpEigen REQUIRED)
-find_package(OpenDrive REQUIRED)
-find_package(MultiAgentSolver REQUIRED)
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   add_compile_options(-O3)
@@ -34,11 +32,8 @@ target_include_directories(${PROJECT_NAME}
 
 # Link dependencies (PRIVATE visibility preferred)
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE
-    osqp::osqp
-    OsqpEigen::OsqpEigen
-    OpenDrive::OpenDrive
-    MultiAgentSolver::MultiAgentSolver
+  PUBLIC
+    Eigen3::Eigen
 )
 
 # Export target to make find_package(adore_math) work in other packages
@@ -63,7 +58,7 @@ install(EXPORT export_${PROJECT_NAME}
 
 # ament exports for ROS 2 packages
 ament_export_include_directories(include)
-ament_export_dependencies(osqp OsqpEigen OpenDrive MultiAgentSolver)
+ament_export_dependencies(Eigen3)
 ament_export_targets(export_${PROJECT_NAME})
 
 ament_package()
