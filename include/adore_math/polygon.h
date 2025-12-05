@@ -21,11 +21,37 @@ namespace adore
 {
 namespace math
 {
-
-
 struct Polygon2d
 {
   std::vector<Point2d> points;
+
+  Polygon2d() = default;
+
+  // Construct from a vector of "point-like" objects (must have .x and .y)
+  template<typename PointLike>
+  explicit Polygon2d( const std::vector<PointLike>& input_points )
+  {
+    points.reserve( input_points.size() );
+    for( const auto& p : input_points )
+    {
+      points.push_back( Point2d{ p.x, p.y } );
+    }
+  }
+
+  // Construct from a flat vector of doubles: [x0, y0, x1, y1, ...]
+  explicit Polygon2d( const std::vector<double>& coords )
+  {
+    // If odd sized, last coordinate is ignored
+    const std::size_t pair_count = coords.size() / 2;
+    points.reserve( pair_count );
+
+    for( std::size_t i = 0; i < pair_count; ++i )
+    {
+      const double x = coords[2 * i];
+      const double y = coords[2 * i + 1];
+      points.push_back( Point2d{ x, y } );
+    }
+  }
 
   template<typename PointLike>
   bool
@@ -39,7 +65,6 @@ struct Polygon2d
     }
     for( std::size_t i = 0, j = point_count - 1; i < point_count; j = i++ )
     {
-
       bool y_in_range = ( ( points[i].y > point.y ) != ( points[j].y > point.y ) );
       if( y_in_range )
       {
@@ -55,5 +80,6 @@ struct Polygon2d
     return inside;
   }
 };
+
 } // namespace math
 } // namespace adore
